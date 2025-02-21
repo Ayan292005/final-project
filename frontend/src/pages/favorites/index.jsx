@@ -3,7 +3,6 @@ import React, { useContext } from 'react'
 import { favoritesContext } from "../../context/FavoritesContext";
 import { basketContext } from "../../context/BasketContext";
 
-
 function Favorites() {
   let { favorites, setFavorites } = useContext(favoritesContext)
   let { basket, setBasket } = useContext(basketContext)
@@ -43,7 +42,7 @@ function Favorites() {
                     <p style={{ fontSize: "1.2rem" }}>{favorite.name}</p>
                    <div className="flex gap-2 items-center">
                    <p style={{ cursor: "pointer" }} onClick={() => handleDeleteFavorite(favorite.id)}><FaHeartBroken /></p>
-                   <p onClick={() => handleAddBasket(favorite)}>Add to cart</p>
+                   <p className="cursor-pointer p-1 border border-white" onClick={() => handleAddBasket(favorite)}>Add to cart</p>
                    </div>
                   </div>
                 ))

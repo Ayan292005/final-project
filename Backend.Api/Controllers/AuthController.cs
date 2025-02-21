@@ -1,8 +1,12 @@
 ﻿using Backend.Api.DTO.User;
+using Backend.Api.Helpers.Email;
+using Backend.Api.Models;
 using Backend.Api.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace Backend.Api.Controllers
 {
@@ -11,13 +15,17 @@ namespace Backend.Api.Controllers
     public class AuthController : ControllerBase
     {
         readonly IUserService _userService;
+        readonly UserManager<AppUser> _userManager;
+        readonly IMailService _mailService;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, UserManager<AppUser> userManager, IMailService mailService)
         {
             _userService = userService;
+            _userManager = userManager;
+            _mailService = mailService;
         }
         [HttpPost("[action]")]
-        public async Task<IActionResult> Register([FromForm] RegisterDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             try
             {
@@ -31,7 +39,7 @@ namespace Backend.Api.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromForm] LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             try
             {
@@ -41,6 +49,67 @@ namespace Backend.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto dto)
+        {
+            if(!ModelState.IsValid) return BadRequest();
+
+            AppUser user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null) return NotFound();
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            object userStat = new
+            {
+                userId = user.Email,
+                token = token
+            };
+            var link = Url.Action("ResetPassword", "Auth", userStat,HttpContext.Request.Scheme);
+            MailRequest mailRequest = new MailRequest()
+            {
+                ToEmail = dto.Email,
+                Subject = "Reset Password",
+                Body = $"<a href='{link}'> Reset Password</a>"
+            };
+
+            await _mailService.SendEmailAsync(mailRequest);
+
+            return Ok(new
+            {
+                token = token,
+                email = user.Email,
+            });
+        }
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            if (dto == null || string.IsNullOrWhiteSpace(dto.email) || string.IsNullOrWhiteSpace(dto.token) || string.IsNullOrWhiteSpace(dto.NewPassword))
+            {
+                return BadRequest(new { message = "All fields are required." });
+            }
+
+            var user = await _userManager.FindByEmailAsync(dto.email);
+            if (user == null)
+            {
+                return BadRequest(new { message = "User not found." });
+            }
+
+            // ✅ Trim password to remove hidden spaces
+            var trimmedPassword = dto.NewPassword.Trim();
+
+            // ✅ URL-decode the token
+            var decodedToken = Uri.UnescapeDataString(dto.token);
+
+            // ✅ Reset password
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, trimmedPassword);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return BadRequest(new { message = "Password reset failed.", errors });
+            }
+
+            return Ok(new { message = "Password has been reset successfully." });
         }
     }
 }

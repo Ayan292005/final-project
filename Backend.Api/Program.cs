@@ -1,5 +1,6 @@
 
 using Backend.Api.DAL;
+using Backend.Api.Helpers.Email;
 using Backend.Api.Models;
 using Backend.Api.Repositories.Implementations;
 using Backend.Api.Repositories.Interface;
@@ -81,10 +82,15 @@ namespace Backend.Api
                     }
                 });
             });
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+            builder.Services.AddTransient<IMailService, MailService>();
             builder.Services.AddIdentity<AppUser, IdentityRole>(opt =>
             {
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.Password.RequiredLength = 6;
+                opt.Password.RequireDigit = true;              // ? At least one digit
+                opt.Password.RequiredLength = 6;               // ? Minimum length
+                opt.Password.RequireNonAlphanumeric = false;   // ? No special character required
+                opt.Password.RequireUppercase = true;          // ? At least one uppercase letter
+                opt.Password.RequireLowercase = true;
 
             }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
             builder.Services.AddDbContext<AppDbContext>(opt =>

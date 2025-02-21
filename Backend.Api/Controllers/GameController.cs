@@ -32,7 +32,7 @@ namespace Backend.Api.Controllers
             }
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get( int id)
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
@@ -48,8 +48,12 @@ namespace Backend.Api.Controllers
         {
             try
             {
-                var imageUrl = $"{Request.Scheme}://{Request.Host}/Image/Game/";
-                return Ok(await _service.CreateAsync(dto, imageUrl));
+                string baseUrl = $"{Request.Scheme}://{Request.Host}";
+              
+
+           
+
+                return Ok(await _service.CreateAsync(dto, baseUrl));
             }
             catch (Exception ex)
             {
@@ -62,7 +66,10 @@ namespace Backend.Api.Controllers
         {
             try
             {
-                await _service.Update(dto);
+                string baseUrl = $"{Request.Scheme}://{Request.Host}";
+
+
+                await _service.Update(dto, baseUrl);
                 return Ok();
             }
             catch (Exception ex)

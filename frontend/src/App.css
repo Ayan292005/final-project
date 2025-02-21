@@ -13,7 +13,6 @@ html{
     padding: 0;
     box-sizing: border-box;
 }
-
 .cont{
     margin: 0 auto;
     width: 80%;
@@ -179,6 +178,45 @@ border-radius: 50%;
 left: -35px !important;
 }
 
+
+.game-slider{
+  position: relative;
+  width: 65%;
+  /* margin: 20px auto; */
+}
+.game-slide{
+  width: 100%;
+  height: 65vh;
+  object-fit: cover;
+}
+.reg,.log{
+  background-image: url("https://wallpapers.com/images/hd/pc-gaming-green-lights-bb587p382axi35vy.jpg");
+  background-position: center;
+  background-size: 99%;
+  border-radius: 30px;
+  padding: 20px 0;
+  margin: 20px auto;
+
+}
+
+.username{
+  position: relative;
+  cursor: pointer;
+  /* width: 100px; */
+  
+}
+
+.userprofile{
+  border: 1px solid white;
+  position: absolute;
+  top: 250%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  /* width: 100px; */
+  color: white;
+  text-align: center;
+  padding: 5px;
+}
 
 @media (min-width: 992px) and (max-width:1200px) {
     .card{

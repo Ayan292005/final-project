@@ -13,9 +13,9 @@ let genreUrl = "http://localhost:5156/api/Genre"
 
 function Games() {
   let [data, setData] = useState([])
+  let { basket, setBasket } = useContext(basketContext)
   let [genreData, setGenreData] = useState([])
   let { favorites, setFavorites } = useContext(favoritesContext)
-  let { basket, setBasket } = useContext(basketContext)
   let [isVisible, setIsVisible] = useState(false);
   function getData() {
     axios.get(gameUrl)
@@ -68,29 +68,29 @@ function Games() {
     }
   }
   const settings = {
-    slidesToShow: 4, // Показывать по 4 жанра
-    slidesToScroll: 4, // Перелистывать по 4 жанра
-    infinite: false, // Отключаем бесконечный цикл
-    arrows: true, // Показываем стрелки
-    dots: true, // Показываем пагинацию
-    speed: 500, // Скорость анимации
+    slidesToShow: 4,
+    slidesToScroll: 4, 
+    infinite: false,
+    arrows: true, 
+    dots: true,
+    speed: 500, 
     responsive: [
       {
-        breakpoint: 1024, // для разрешений больше 1024px
+        breakpoint: 1024, 
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
         },
       },
       {
-        breakpoint: 768, // для разрешений больше 768px
+        breakpoint: 768, 
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
         },
       },
       {
-        breakpoint: 480, // для разрешений больше 480px
+        breakpoint: 480,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -103,17 +103,6 @@ function Games() {
   const toggleVisibility = () => {
     setIsVisible(prevState => !prevState);
   };
-
-  function handleAddBasket(product) {
-    let findBasket = basket.find(item => item.id == product.id)
-    if (findBasket) {
-      findBasket.count++
-      setBasket([...basket])
-    } else {
-      setBasket([...basket, { ...product, count: 1 }])
-
-    }
-  }
   return (
     <div>
     <div className='genres'>
@@ -155,7 +144,7 @@ function Games() {
               <div className='game-info'>
                 <NavLink to={`/games/${product.id}`}><h1>{product.name}</h1></NavLink>
                 <p>{product.price}<span style={{ color: " #C0F001" }}>$</span></p>
-                <p onClick={() => handleAddBasket(product)}>add to cart</p>
+               
               </div>
             </div>
           ))

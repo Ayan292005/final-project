@@ -1,9 +1,4 @@
 import React, { useContext } from 'react'
-// import RemoveIcon from '@mui/icons-material/Remove';
-// import AddIcon from '@mui/icons-material/Add';
-// import DeleteIcon from '@mui/icons-material/Delete';
-
-// import { IconButton } from '@mui/material';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { basketContext } from '../../context/BasketContext';
@@ -53,7 +48,7 @@ function Basket() {
             <h1 style={{ textAlign: "center" }}>Your Basket</h1>
             <table style={{ width: "80%", margin: "0 auto" }}>
               <thead>
-                <tr>
+                <tr className='text-left'>
                   <th>Image</th>
                   <th>Name</th>
                   <th>Price</th>
@@ -67,7 +62,7 @@ function Basket() {
               <tbody>
                 {
                   basket.map(item => (
-                    <tr key={item.id}  style={{width:"100%"}}>
+                    <tr key={item.id}>
                       <td><img src={item.imageUrl} alt="" style={{ width: "80px", height: "80px", objectFit: "contain" }} /></td>
                       <td>{item.name}</td>
                       <td>{item.price}$</td>
@@ -75,7 +70,7 @@ function Basket() {
                       <td><button onClick={() => handleDecrease(item)}>-</button></td>
                       <td>{item.count}</td>
                       <td><button onClick={() => handleIncrease(item)}>+</button></td>
-                      <td><button onClick={() => handleDelete(item)}>delete</button></td>
+                      <td><button onClick={() => handleDelete(item)}>Delete</button></td>
                     </tr>
                   ))
                 }
